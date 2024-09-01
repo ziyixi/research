@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "gptSummary",
+    srcs = [
+        "chatgpt.go",
+        "gemini.go",
+        "tokenCalculation.go",
+    ],
+    embedsrcs = ["template/prompt.tmpl"],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/mail2todo/gptSummary",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_google_generative_ai_go//genai",
+        "@com_github_pkoukk_tiktoken_go//:tiktoken-go",
+        "@com_github_sashabaranov_go_openai//:go-openai",
+        "@org_golang_google_api//option",
+    ],
+)

@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "mail2todo_lib",
+    srcs = ["mail2todo.go"],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/mail2todo",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//self_host/packages/mail2todo/handleRouter",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_joho_godotenv//:godotenv",
+    ],
+)
+
+go_binary(
+    name = "mail2todo",
+    embed = [":mail2todo_lib"],
+    visibility = ["//visibility:public"],
+)
