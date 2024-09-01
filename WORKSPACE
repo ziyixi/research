@@ -1,6 +1,6 @@
-load("@gazelle//:deps.bzl", "go_repository")
-
 """This is the module docstring for the MonoRepo workspace."""
+
+load("@gazelle//:deps.bzl", "go_repository")
 
 go_repository(
     name = "co_honnef_go_tools",
