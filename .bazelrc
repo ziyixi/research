@@ -1,2 +1,1 @@
 common --enable_bzlmod
-build://self_host/host:update --spawn_strategy=standalone
