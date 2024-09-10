@@ -11,12 +11,9 @@ hugo_theme(
 
 hugo_site(
     name = "homepage",
-    archetypes = glob(["archetypes/**"]),
-    assets = glob(["assets/**"]),
     config = "config.toml",
-    content = glob(["content/**"]),
+    content = ["//doc/website:content"],
     data = glob(["data/**"]),
-    images = glob(["images/**"]),
     layouts = glob(["layouts/**"]),
     static = glob(["static/**"]),
     theme = ":hugo-coder",
@@ -32,7 +29,7 @@ hugo_serve(
 
 # Create a tgz package
 pkg_tar(
-    name = "docs_tgz",
-    srcs = [":docs"],
-    package_file_name = "docs.tgz",
+    name = "homepage_tgz",
+    srcs = [":homepage"],
+    package_file_name = "homepage.tgz",
 )

@@ -1,5 +1,5 @@
-baseurl = "http://www.example.com"
-title = "johndoe"
+baseurl = "https://ziyixi.science"
+title = "Zayne"
 theme = "hugo-coder"
 languagecode = "en"
 defaultcontentlanguage = "en"
@@ -14,18 +14,17 @@ disqusShortname = "yourdiscussshortname"
 style = "github-dark"
 
 [params]
-author = "John Doe"
-info = "Full Stack DevOps and Magician"
-description = "John Doe's personal website"
+author = "Ziyi (Zayne) Xi"
+info = "Software Engineer, PhD in computational science"
+description = "Zayne's personal website"
 keywords = "blog,developer,personal"
-avatarurl = "images/avatar.jpg"
-#gravatar = "john.doe@example.com"
+avatarurl = "images/avatar.jpg/"
 
-faviconSVG = "/img/favicon.svg"
-favicon_32 = "/img/favicon-32x32.png"
-favicon_16 = "/img/favicon-16x16.png"
+faviconSVG = "favicon/favicon.ico"
+favicon_32 = "favicon/favicon-32x32.png"
+favicon_16 = "favicon/favicon-16x16.png"
 
-since = 2019
+since = 2024
 
 enableTwemoji = true
 
@@ -47,24 +46,27 @@ author = "authors"
 name = "Github"
 icon = "fa-brands fa-github fa-2x"
 weight = 1
-url = "https://github.com/johndoe/"
+url = "https://github.com/ziyixi/"
 [[params.social]]
-name = "Gitlab"
-icon = "fa-brands fa-gitlab fa-2x"
+name = "Linkedin"
+icon = "fa-brands fa-linkedin fa-2x"
 weight = 2
-url = "https://gitlab.com/johndoe/"
-[[params.social]]
-name = "Twitter"
-icon = "fa-brands fa-x-twitter fa-2x"
-weight = 3
-url = "https://twitter.com/johndoe/"
+url = "https://www.linkedin.com/in/ziyixi/"
 
 # Menu links
 [[menu.main]]
 name = "Blog"
-weight = 1
+weight = 100
 url = "posts/"
 [[menu.main]]
+name = "Publications"
+weight = 200
+url = "publication/"
+[[menu.main]]
+name = "Open Source"
+weight = 300
+url = "code/"
+[[menu.main]]
 name = "About"
-weight = 2
+weight = 400
 url = "about/"
