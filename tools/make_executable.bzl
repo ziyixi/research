@@ -1,8 +1,8 @@
 """This module provides a rule to make a file executable."""
 
 def _make_executable_impl(ctx):
-    # Define the output file as a new executable file
-    output = ctx.actions.declare_file(ctx.attr.src.basename)
+    # Get the basename of the input file
+    output = ctx.actions.declare_file(ctx.file.src.basename)
 
     # Run a shell command to make the file executable
     ctx.actions.run_shell(
