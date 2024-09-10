@@ -1,0 +1,125 @@
+# * =============================================== global networks and volumes =============================================== * #
+networks:
+  allexport:
+  unami:
+  changedetection:
+  wordpress:
+
+
+volumes: {}
+
+services:
+  # * =============================================== unami =============================================== * #
+  unami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: unami
+    ports:
+      - "10001:3000"
+    environment:
+      DATABASE_URL: postgresql://umami:umami@unami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: randomhashsalt
+    depends_on:
+      - unami-db
+    restart: always
+    networks:
+      - allexport
+      - unami
+
+  unami-db:
+    image: postgres:15-alpine
+    container_name: unami-db
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: umami
+    volumes:
+      - ./data/unami:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - unami
+
+  # * =============================================== changedetection =============================================== * #
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io:latest
+    container_name: changedetection
+    ports:
+      - "10002:5000"
+    hostname: changedetection
+    volumes:
+      - ./data/changedetection:/datastore
+    environment:
+      - BASE_URL=https://changedetection.ziyixi.science
+      - USE_X_SETTINGS=1
+      - FETCH_WORKERS=2
+    restart: always
+    networks:
+      - allexport
+      - changedetection
+
+  browser-chrome:
+    hostname: browser-chrome
+    image: selenium/standalone-chrome-debug:latest
+    environment:
+      - VNC_NO_PASSWORD=1
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
+      - SCREEN_DEPTH=24
+    volumes:
+      - /dev/shm:/dev/shm
+    restart: always
+    networks:
+      - changedetection
+
+  # * =============================================== cloudmailin-todoist-app =============================================== * #
+  cloudmailin-todoist-app:
+    image: ghcr.io/ziyixi/cloudmailin-todoist-sync:latest
+    container_name: cloudmailin-todoist-app
+    ports:
+      - "10003:8080"
+    restart: always
+    env_file: ./env/cloudmailin.env
+    networks:
+      - allexport
+
+  # * =============================================== stirling-pdf =============================================== * #
+  stirling:
+    image: frooodle/s-pdf:latest
+    container_name: stirling
+    ports:
+      - "10005:8080"
+    restart: always
+    volumes:
+      - ./env/stirling:/configs
+      - ./data/stirling_logs:/logs/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
+      - LANGS=en_US
+      - DOCKER_ENABLE_SECURITY=true
+      - SECURITY_ENABLE_LOGIN=true
+    networks:
+      - allexport
+
+  # * =============================================== slash =============================================== * #
+  slash:
+    image: yourselfhosted/slash:latest
+    container_name: slash
+    ports:
+      - "10006:5231"
+    volumes:
+      - ./data/slash:/var/opt/slash
+    restart: unless-stopped
+    networks:
+      - allexport
+
+  # * =============================================== backup =============================================== * #
+  backup:
+    image: offen/docker-volume-backup:v2.43.0
+    restart: always
+    env_file: ./env/backup.env
+    volumes:
+      - ./data:/backup/data:ro
+      - ./config:/backup/config:ro  
+      - ./env:/backup/env:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
