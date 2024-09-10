@@ -14,7 +14,7 @@ filegroup(
 # Group docker-compose.yml and other necessary files
 filegroup(
     name = "compose_group",
-    srcs = ["docker-compose.yml"],
+    srcs = ["docker_compose.yml"],
 )
 
 # Make the update.sh script executable
