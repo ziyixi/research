@@ -18,7 +18,7 @@ author = "Ziyi (Zayne) Xi"
 info = "Software Engineer, PhD in computational science"
 description = "Zayne's personal website"
 keywords = "blog,developer,personal"
-avatarurl = "images/avatar.jpg/"
+avatarurl = "images/avatar.jpg"
 
 faviconSVG = "favicon/favicon.ico"
 favicon_32 = "favicon/favicon-32x32.png"
