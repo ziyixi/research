@@ -25,15 +25,16 @@ favicon_32 = "favicon/favicon-32x32.png"
 favicon_16 = "favicon/favicon-16x16.png"
 
 since = 2024
+commit = "https://github.com/ziyixi/ziyixi.github.io/tree/"
 
 enableTwemoji = true
 
 colorScheme = "auto"
 hidecolorschemetoggle = false
 
-# customCSS = ["css/custom.css"]
-# customSCSS = ["scss/custom.scss"]
-# customJS = ["js/custom.js"]
+[params.umami]
+siteID = "44af872c-1d55-4ab9-85ab-2cd0a5f0d39c"
+scriptURL = "https://unami.ziyixi.science/script.js"
 
 [taxonomies]
 category = "categories"
