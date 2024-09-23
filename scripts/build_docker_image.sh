@@ -15,7 +15,7 @@ cp -f bazel-bin/self_host/packages/todofy/todofy_/todofy self_host/packages/todo
 }
 
 # Step 3: Build the Docker image
-docker build -t todofy:${TAG} -f self_host/packages/todofy/Dockerfile .
+docker build -t ghcr.io/ziyixi/todofy:${TAG} -f self_host/packages/todofy/Dockerfile .
 
 # Step 4: Clean up (optional)
 rm -f self_host/packages/todofy/_todofy_binary
