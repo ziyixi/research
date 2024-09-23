@@ -20,5 +20,7 @@ go_library(
 go_binary(
     name = "todofy",
     embed = [":todofy_lib"],
+    pure = "on",
+    static = "on",
     visibility = ["//visibility:public"],
 )
