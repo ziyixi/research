@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "doc/website/**"
+      - "website/homepage/**"
+      - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
 
 jobs:

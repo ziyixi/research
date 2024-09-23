@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "self_host/packages/todofy/**"
+      - "scripts/build_docker_image.sh"
+      - ".github/workflows/todofy-build.yml"
   workflow_dispatch:
 
 jobs:
