@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	sender       = "todofy@mail.ziyixi.science"
+	sender       = "ziyixi@mailjet.ziyixi.science"
 	senderName   = "Todofy"
 	receiverName = "dida365"
 )
