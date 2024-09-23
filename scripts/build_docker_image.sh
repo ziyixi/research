@@ -9,7 +9,7 @@ bazel build //self_host/packages/todofy || {
 }
 
 # Step 2: Copy the Bazel-built binary into the Docker build context (temporary location)
-cp -f bazel-bin/self_host/packages/todofy/todofy self_host/packages/todofy/_todofy_binary || {
+cp -f bazel-bin/self_host/packages/todofy_/todofy self_host/packages/todofy/_todofy_binary || {
     echo "Copying binary failed"
     exit 1
 }
