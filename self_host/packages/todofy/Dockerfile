@@ -1,6 +1,6 @@
 FROM alpine:latest
 LABEL org.opencontainers.image.authors="docker@ziyixi.science"
-LABEL org.opencontainers.image.source="https://github.com/ziyixi/monorepo/self_host/packages/todofy"
+LABEL org.opencontainers.image.source="https://github.com/ziyixi/monorepo"
 LABEL org.opencontainers.image.description="Package to handle cloudmailin's post on receiving emails, and update todo tasks accordingly with Gemini's summary"
 LABEL org.opencontainers.image.licenses="MIT"
 

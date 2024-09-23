@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG=test
+TAG=$1
 
 # Step 1: Build the Go binary using Bazel
 bazel build //self_host/packages/todofy || {
