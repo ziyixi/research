@@ -29,7 +29,7 @@ func RateLimitMiddleware() gin.HandlerFunc {
 		// Check the request count
 		if requestsCount >= 2 {
 			// Block the request if the limit is reached
-			c.JSON(http.StatusTooManyRequests, gin.H{
+			c.JSON(http.StatusServiceUnavailable, gin.H{
 				"error": "Too many requests. Please wait for the next minute.",
 			})
 			c.Abort()
