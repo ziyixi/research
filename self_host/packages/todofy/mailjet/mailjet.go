@@ -55,6 +55,14 @@ func SendEmail(c *gin.Context, mailContent cloudmailin.MailInfo) (interface{}, e
 	}
 	taskDescription := buf.String()
 
+	// limit subject character size smaller than 255
+	subject_front := mailContent.Subject
+	subject_back := fmt.Sprintf(" [%v]", mailContent.From)
+	if len(subject_front) > 255-len(subject_back) {
+		subject_front = subject_front[:255-len(subject_back)]
+	}
+	mailContent.Subject = subject_front
+
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
 			From: &mailjet.RecipientV31{
