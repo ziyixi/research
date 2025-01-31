@@ -50,7 +50,7 @@ func SummaryByGemini(ctx *gin.Context, content string) (string, error) {
 	contentWithPrompt := buf.String()
 
 	// create messages and limit to be smaller than 8192 tokens
-	model := client.GenerativeModel("gemini-1.5-pro")
+	model := client.GenerativeModel("gemini-2.0-flash-exp")
 	respToken, err := model.CountTokens(c, genai.Text(contentWithPrompt))
 	if err != nil {
 		return "", fmt.Errorf("token count error: %w", err)
