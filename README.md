@@ -5,3 +5,7 @@
 [![Todofy Build](https://github.com/ziyixi/MonoRepo/actions/workflows/todofy-build.yml/badge.svg)](https://github.com/ziyixi/MonoRepo/actions/workflows/todofy-build.yml)
 
 A monorepo managed by Bazel for all my packages
+
+Currently it contains:
+
+- todofy: A todo app that can parse all my incoming emails, summary using LLM, and then forward them to my todo list (ticktick).
