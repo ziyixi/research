@@ -1,0 +1,59 @@
+load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//proto:def.bzl", "go_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_proto_grpc_go//:defs.bzl", "go_grpc_library")
+
+package(
+    default_visibility = ["//self_host/packages/todofy:__subpackages__"],
+)
+
+proto_library(
+    name = "self_host_packages_todofy_proto",
+    srcs = [
+        "database.proto",
+        "large_language_model.proto",
+        "todo.proto",
+    ],
+    deps = [
+        "@protobuf//:timestamp_proto",
+    ],
+)
+
+# It's only used to generate the go files, instead of using it as a dependency. So we can use IDE for linting.
+go_grpc_library(
+    name = "self_host_packages_todofy_proto_go_grpc",
+    compilers = ["@io_bazel_rules_go//proto:go_grpc"],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy/proto",
+    protos = [
+        ":self_host_packages_todofy_proto",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+go_proto_library(
+    name = "proto_go_proto",
+    compilers = ["@io_bazel_rules_go//proto:go_grpc"],
+    importpath = "self_host/packages/todofy/proto",
+    proto = ":self_host_packages_todofy_proto",
+)
+
+go_library(
+    name = "proto",
+    srcs = [
+        "database.pb.go",
+        "database_grpc.pb.go",
+        "large_language_model.pb.go",
+        "large_language_model_grpc.pb.go",
+        "todo.pb.go",
+        "todo_grpc.pb.go",
+    ],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy/proto",
+    deps = [
+        "@org_golang_google_grpc//:grpc",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+        "@org_golang_google_protobuf//types/known/timestamppb",
+    ],
+)

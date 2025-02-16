@@ -1,2 +1,5 @@
 bazel-*
 environment/*
+**/proto/*.go
+# Google Drive Sync
+.tmp*

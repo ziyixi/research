@@ -1,0 +1,18 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+package(
+    default_visibility = ["//self_host/packages/todofy:__subpackages__"],
+)
+
+go_library(
+    name = "utils",
+    srcs = [
+        "cloudmailin.go",
+        "utils.go",
+    ],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy/utils",
+    deps = [
+        "@com_github_johanneskaufmann_html_to_markdown//:html-to-markdown",
+        "@com_github_tidwall_gjson//:gjson",
+    ],
+)

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package self_host.packages.todofy;
+option go_package = "self_host/packages/todofy/proto";
+
+enum ModelFamily {
+  // The model family is unspecified.
+  MODEL_FAMILY_UNSPECIFIED = 0;
+  // The model family is Gemini.
+  MODEL_FAMILY_GEMINI = 1;
+}
+
+enum Model {
+  MODEL_UNSPECIFIED = 0;
+  // gemini-2.0-pro-exp-02-05
+  MODEL_GEMINI_2_0_PRO_EXP_02_05 = 1;
+  // gemini-1.5-pro
+  MODEL_GEMINI_1_5_PRO = 2;
+  // gemini-2.0-flash
+  MODEL_GEMINI_2_0_FLASH = 3;
+  // gemini-1.5-flash
+  MODEL_GEMINI_1_5_FLASH = 4;
+}
+
+message LLMSummaryRequest {
+  // model family
+  ModelFamily model_family = 1;
+  // The model to use for the request.
+  Model model = 2;
+  // The prompt to summarize.
+  string prompt = 3;
+  // The maximum number of tokens to generate.
+  int32 max_tokens = 4;
+  // The text to summarize.
+  string text = 5;
+}
+
+message LLMSummaryResponse {
+  // The summary of the text.
+  string summary = 1;
+}
+
+service LLMSummaryService {
+  // Summarize the text using the specified model.
+  rpc Summarize(LLMSummaryRequest) returns (LLMSummaryResponse);
+}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package self_host.packages.todofy;
+option go_package = "self_host/packages/todofy/proto";
+
+enum TodoApp {
+  TODO_APP_UNSPECIFIED = 0;
+  TODO_APP_DIDA365 = 1;
+  TODO_APP_TICKTICK = 2;
+  TODO_APP_TODOIST = 3;
+}
+
+enum PopullateTodoMethod {
+  POPULLATE_TODO_METHOD_UNSPECIFIED = 0;
+  POPULLATE_TODO_METHOD_API = 1;
+}
+
+message TodoRequest {
+  // The type of todo app to use.
+  TodoApp app = 1;
+  // The method to populate the todo.
+  PopullateTodoMethod method = 2;
+  // The subject of the todo.
+  string subject = 3;
+  // The body of the todo.
+  string body = 4;
+  // The tags of the todo.
+  repeated string tags = 5;
+  // The category of the todo.
+  string category = 6;
+}
+
+message TodoResponse {
+  // The id of the todo.
+  string id = 1;
+  // The message returned by the populating service.
+  string message = 2;
+}
+
+service TodoService {
+  // Populate the todo using the specified method.
+  rpc PopulateTodo(TodoRequest) returns (TodoResponse);
+}
