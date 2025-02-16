@@ -8,11 +8,14 @@ go_library(
     name = "utils",
     srcs = [
         "cloudmailin.go",
+        "grpc.go",
         "utils.go",
     ],
     importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy/utils",
     deps = [
         "@com_github_johanneskaufmann_html_to_markdown//:html-to-markdown",
         "@com_github_tidwall_gjson//:gjson",
+        "@org_golang_google_grpc//:grpc",
+        "@org_golang_google_grpc//reflection",
     ],
 )
