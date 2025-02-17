@@ -14,42 +14,36 @@ enum DatabaseType {
 }
 
 message DataBaseSchema {
-  // the timestamp of the creation.
-  google.protobuf.Timestamp created_at = 1;
-  // the timestamp of the last update.
-  google.protobuf.Timestamp updated_at = 2;
   // the model family
-  ModelFamily model_family = 3;
+  ModelFamily model_family = 1;
   // the model to use for the request.
-  Model model = 4;
+  Model model = 2;
   // The prompt to summarize.
-  string prompt = 5;
+  string prompt = 3;
   // The maximum number of tokens to generate.
-  int32 max_tokens = 6;
+  int32 max_tokens = 4;
   // The text to summarize.
-  string text = 7;
+  string text = 5;
   // The summary of the text.
-  string summary = 8;
+  string summary = 6;
+  // the timestamp of the entry created.
+  google.protobuf.Timestamp created_at = 7;
+  // the timestamp of the entry updated.
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 message WriteRequest {
   // The type of database to use.
   DatabaseType type = 1;
-  // The name of the database.
-  string name = 2;
   // The schema of the database.
-  DataBaseSchema schema = 3;
+  DataBaseSchema schema = 2;
 }
 
 message QueryRecentRequest {
   // The type of database to use.
   DatabaseType type = 1;
-  // The name of the database.
-  string name = 2;
-  // start timestamp of the query.
-  google.protobuf.Timestamp start = 3;
-  // end timestamp of the query.
-  google.protobuf.Timestamp end = 4;
+  // how much time ago to query.
+  int64 time_ago_in_seconds = 2;
 }
 
 message QueryRecentResponse {
@@ -61,7 +55,21 @@ message WriteResponse {
   // An empty message.
 }
 
+message CreateIfNotExistRequest {
+  // The type of database to use.
+  DatabaseType type = 1;
+  // The path to the database.
+  string path = 2;
+}
+
+message CreateIfNotExistResponse {
+  // An empty message.
+}
+
 service DataBaseService {
+  // Create a new database.
+  rpc CreateIfNotExist(CreateIfNotExistRequest)
+      returns (CreateIfNotExistResponse);
   // Write to the database.
   rpc Write(WriteRequest) returns (WriteResponse);
   // Query recent entries in the database.

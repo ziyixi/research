@@ -3,3 +3,4 @@ environment/*
 **/proto/*.go
 # Google Drive Sync
 .tmp*
+test

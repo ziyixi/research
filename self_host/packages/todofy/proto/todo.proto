@@ -12,7 +12,8 @@ enum TodoApp {
 
 enum PopullateTodoMethod {
   POPULLATE_TODO_METHOD_UNSPECIFIED = 0;
-  POPULLATE_TODO_METHOD_API = 1;
+  POPULLATE_TODO_METHOD_MAILJET = 1;
+  POPULLATE_TODO_METHOD_API = 2;
 }
 
 message TodoRequest {
@@ -28,6 +29,8 @@ message TodoRequest {
   repeated string tags = 5;
   // The category of the todo.
   string category = 6;
+  // The todo task is collected from.
+  string from = 7;
 }
 
 message TodoResponse {

@@ -1,0 +1,29 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+package(
+    default_visibility = ["//self_host/packages/todofy:__subpackages__"],
+)
+
+go_library(
+    name = "todo_lib",
+    srcs = [
+        "const.go",
+        "todo.go",
+    ],
+    importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy/todo",
+    deps = [
+        "//self_host/packages/todofy/proto",
+        "//self_host/packages/todofy/utils",
+        "@com_github_badoux_checkmail//:checkmail",
+        "@com_github_mailjet_mailjet_apiv3_go_v4//:mailjet-apiv3-go",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
+    ],
+)
+
+go_binary(
+    name = "todo",
+    embed = [":todo_lib"],
+    pure = "on",
+    static = "on",
+)
