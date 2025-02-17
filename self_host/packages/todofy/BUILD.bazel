@@ -7,17 +7,20 @@ package(
 go_library(
     name = "todofy_lib",
     srcs = [
+        "grpc.go",
         "main.go",
         "route.go",
     ],
     importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy",
     visibility = ["//visibility:private"],
     deps = [
+        "//self_host/packages/todofy/proto",
         "//self_host/packages/todofy/utils",
-        "@com_github_gofiber_fiber_v2//:fiber",
-        "@com_github_gofiber_fiber_v2//log",
-        "@com_github_gofiber_fiber_v2//middleware/basicauth",
-        "@com_github_gofiber_fiber_v2//middleware/logger",
+        "@com_github_gin_gonic_gin//:gin",
+        "@com_github_sirupsen_logrus//:logrus",
+        "@org_golang_google_grpc//:grpc",
+        "@org_golang_google_grpc//credentials/insecure",
+        "@org_golang_google_grpc//health/grpc_health_v1",
     ],
 )
 

@@ -20,7 +20,6 @@ var log = logrus.New()
 
 func init() {
 	log.SetFormatter(&logrus.TextFormatter{
-		DisableColors: true,
 		FullTimestamp: true,
 	})
 }
