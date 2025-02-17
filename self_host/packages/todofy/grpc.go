@@ -3,111 +3,107 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health/grpc_health_v1"
-
-	pb "github.com/ziyixi/monorepo/self_host/packages/todofy/proto"
 )
 
+// ServiceConfig holds the configuration for a single gRPC service
+type ServiceConfig struct {
+	name      string
+	addr      string
+	newClient func(*grpc.ClientConn) interface{}
+}
+
+// GRPCClients manages multiple gRPC client connections
 type GRPCClients struct {
-	llmConn        *grpc.ClientConn
-	llmClient      pb.LLMSummaryServiceClient
-	todoConn       *grpc.ClientConn
-	todoClient     pb.TodoServiceClient
-	databaseConn   *grpc.ClientConn
-	databaseClient pb.DataBaseServiceClient
+	services map[string]*serviceState
+	mu       sync.RWMutex
 }
 
-func NewGRPCClients() (*GRPCClients, error) {
-	llmConn, err := grpc.NewClient(*llmAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to LLM server: %w", err)
-	}
-
-	todoConn, err := grpc.NewClient(*todoAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to Todo server: %w", err)
-	}
-
-	databaseConn, err := grpc.NewClient(*databaseAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to Database server: %w", err)
-	}
-
-	return &GRPCClients{
-		llmConn:        llmConn,
-		llmClient:      pb.NewLLMSummaryServiceClient(llmConn),
-		todoConn:       todoConn,
-		todoClient:     pb.NewTodoServiceClient(todoConn),
-		databaseConn:   databaseConn,
-		databaseClient: pb.NewDataBaseServiceClient(databaseConn),
-	}, nil
+type serviceState struct {
+	conn   *grpc.ClientConn
+	client interface{}
 }
 
+// NewGRPCClients creates a new GRPCClients instance with the specified services
+func NewGRPCClients(configs []ServiceConfig) (*GRPCClients, error) {
+	clients := &GRPCClients{
+		services: make(map[string]*serviceState),
+	}
+
+	for _, config := range configs {
+		conn, err := grpc.NewClient(config.addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			clients.Close() // Clean up any connections already established
+			return nil, fmt.Errorf("failed to connect to %s server: %w", config.name, err)
+		}
+
+		clients.services[config.name] = &serviceState{
+			conn:   conn,
+			client: config.newClient(conn),
+		}
+	}
+
+	return clients, nil
+}
+
+// GetClient returns the client for the specified service
+func (c *GRPCClients) GetClient(name string) interface{} {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if service, ok := c.services[name]; ok {
+		return service.client
+	}
+	return nil
+}
+
+// Close closes all connections
 func (c *GRPCClients) Close() {
-	if c.llmConn != nil {
-		c.llmConn.Close()
-	}
-	if c.todoConn != nil {
-		c.todoConn.Close()
-	}
-	if c.databaseConn != nil {
-		c.databaseConn.Close()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for _, service := range c.services {
+		if service.conn != nil {
+			service.conn.Close()
+		}
 	}
 }
 
+// WaitForHealthy waits for all services to become healthy
 func (c *GRPCClients) WaitForHealthy(ctx context.Context, timeout time.Duration) error {
-	// Validate connections first
-	if c.llmConn == nil || c.todoConn == nil || c.databaseConn == nil {
-		return fmt.Errorf("one or more gRPC connections are nil")
-	}
+	c.mu.RLock()
+	serviceCount := len(c.services)
+	c.mu.RUnlock()
 
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
+	errChan := make(chan error, serviceCount)
+	var wg sync.WaitGroup
 
-	// Pre-create health clients to validate them
-	services := []struct {
-		name   string
-		conn   *grpc.ClientConn
-		client grpc_health_v1.HealthClient
-	}{
-		{
-			name:   "llm",
-			conn:   c.llmConn,
-			client: grpc_health_v1.NewHealthClient(c.llmConn),
-		},
-		{
-			name:   "todo",
-			conn:   c.todoConn,
-			client: grpc_health_v1.NewHealthClient(c.todoConn),
-		},
-		{
-			name:   "database",
-			conn:   c.databaseConn,
-			client: grpc_health_v1.NewHealthClient(c.databaseConn),
-		},
-	}
+	c.mu.RLock()
+	for name, service := range c.services {
+		wg.Add(1)
+		go func(name string, conn *grpc.ClientConn) {
+			defer wg.Done()
 
-	errChan := make(chan error, len(services))
+			healthClient := grpc_health_v1.NewHealthClient(conn)
+			ticker := time.NewTicker(500 * time.Millisecond)
+			defer ticker.Stop()
 
-	for _, service := range services {
-		go func(name string, client grpc_health_v1.HealthClient) {
 			for {
 				select {
 				case <-ctx.Done():
 					errChan <- fmt.Errorf("health check timeout for %s", name)
 					return
-				default:
+				case <-ticker.C:
 					req := &grpc_health_v1.HealthCheckRequest{}
-					resp, err := client.Check(ctx, req)
+					resp, err := healthClient.Check(ctx, req)
 
 					if err != nil {
-						// Log the error for debugging
 						log.Warningf("Health check error for %s: %v", name, err)
-						time.Sleep(100 * time.Millisecond)
 						continue
 					}
 
@@ -115,16 +111,20 @@ func (c *GRPCClients) WaitForHealthy(ctx context.Context, timeout time.Duration)
 						errChan <- nil
 						return
 					}
-
-					time.Sleep(500 * time.Millisecond)
 				}
 			}
-		}(service.name, service.client)
+		}(name, service.conn)
 	}
+	c.mu.RUnlock()
+
+	go func() {
+		wg.Wait()
+		close(errChan)
+	}()
 
 	var errors []error
-	for i := 0; i < len(services); i++ {
-		if err := <-errChan; err != nil {
+	for err := range errChan {
+		if err != nil {
 			errors = append(errors, err)
 		}
 	}
