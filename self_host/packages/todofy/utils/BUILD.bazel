@@ -17,6 +17,8 @@ go_library(
         "@com_github_johanneskaufmann_html_to_markdown//:html-to-markdown",
         "@com_github_tidwall_gjson//:gjson",
         "@org_golang_google_grpc//:grpc",
+        "@org_golang_google_grpc//health",
+        "@org_golang_google_grpc//health/grpc_health_v1",
         "@org_golang_google_grpc//reflection",
     ],
 )

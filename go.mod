@@ -11,6 +11,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/generative-ai-go v0.19.0
 	github.com/mailjet/mailjet-apiv3-go/v4 v4.0.7
+	github.com/sirupsen/logrus v1.9.3
 	github.com/tidwall/gjson v1.18.0
 	google.golang.org/api v0.221.0
 	google.golang.org/grpc v1.70.0

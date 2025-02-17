@@ -4,11 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"slices"
 	"time"
 
 	"github.com/google/generative-ai-go/genai"
+	"github.com/sirupsen/logrus"
 	"github.com/ziyixi/monorepo/self_host/packages/todofy/utils"
 	"google.golang.org/api/option"
 	"google.golang.org/grpc/codes"
@@ -16,6 +16,15 @@ import (
 
 	pb "github.com/ziyixi/monorepo/self_host/packages/todofy/proto"
 )
+
+var log = logrus.New()
+
+func init() {
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+}
 
 var (
 	port         = flag.Int("port", 50051, "The server port of the LLM service")
@@ -62,14 +71,16 @@ func (s *llmServer) summaryInternal(ctx context.Context, modelFamily pb.ModelFam
 
 		summary, err := s.tryGenerateSummary(ctx, modelFamily, prompt, text, model, maxTokens)
 		if err != nil {
-			log.Printf("Error generating summary with model %s: %v", model, err)
+			log.Warningf("Error generating summary with model %s: %v", model, err)
 			time.Sleep(time.Second)
 			continue
 		}
 		if summary != "" {
+			log.Infof("Successfully generated summary with model %s", model)
 			return summary, nil
 		}
 	}
+	log.Errorf("Failed to generate summary with all models")
 	return "", status.Errorf(codes.Internal, "failed to generate summary with all models: %v", models)
 }
 

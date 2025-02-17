@@ -5,17 +5,26 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
-	"log"
 	"slices"
 
 	"github.com/badoux/checkmail"
 	"github.com/mailjet/mailjet-apiv3-go/v4"
+	"github.com/sirupsen/logrus"
 	"github.com/ziyixi/monorepo/self_host/packages/todofy/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/ziyixi/monorepo/self_host/packages/todofy/proto"
 )
+
+var log = logrus.New()
+
+func init() {
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+}
 
 var (
 	port                 = flag.Int("port", 50052, "The server port of the Todo service")
@@ -94,7 +103,7 @@ func (s *todoServer) PopulateTodoByMailjet(ctx context.Context, req *pb.TodoRequ
 	if err != nil {
 		return nil, fmt.Errorf("fetch mailjet email status error: %w", err)
 	}
-
+	log.Infof("Mailjet email status: %v", response)
 	return &pb.TodoResponse{
 		Message: fmt.Sprintf("%v", response),
 	}, nil

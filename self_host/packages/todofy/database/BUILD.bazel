@@ -11,6 +11,7 @@ go_library(
     deps = [
         "//self_host/packages/todofy/proto",
         "//self_host/packages/todofy/utils",
+        "@com_github_sirupsen_logrus//:logrus",
         "@io_gorm_driver_sqlite//:sqlite",
         "@io_gorm_gorm//:gorm",
         "@org_golang_google_grpc//codes",

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/ziyixi/monorepo/self_host/packages/todofy/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,6 +15,15 @@ import (
 	pb "github.com/ziyixi/monorepo/self_host/packages/todofy/proto"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var log = logrus.New()
+
+func init() {
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
+}
 
 var (
 	port = flag.Int("port", 50053, "The server port of the database service")
@@ -49,6 +58,7 @@ func (s *databaseServer) CreateIfNotExist(ctx context.Context, req *pb.CreateIfN
 	default:
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported database type: %v", req.Type)
 	}
+	log.Infof("Database initialized at %s", req.Path)
 	return &pb.CreateIfNotExistResponse{}, nil
 }
 
@@ -68,6 +78,7 @@ func (s *databaseServer) Write(ctx context.Context, req *pb.WriteRequest) (*pb.W
 	if err := s.db.Create(&entry).Error; err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create entry: %v", err)
 	}
+	log.Infof("Entry created for model %s with max tokens %d", req.Schema.Model, req.Schema.MaxTokens)
 	return &pb.WriteResponse{}, nil
 }
 
@@ -103,7 +114,7 @@ func (s *databaseServer) QueryRecent(ctx context.Context, req *pb.QueryRecentReq
 			UpdatedAt:   timestamppb.New(entry.UpdatedAt),
 		}
 	}
-
+	log.Infof("Queried %d entries from the database between %s and %s", len(entries), from.Format(time.RFC3339), now.Format(time.RFC3339))
 	return &pb.QueryRecentResponse{
 		Entries: schemas,
 	}, nil

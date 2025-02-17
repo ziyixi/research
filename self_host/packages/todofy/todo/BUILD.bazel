@@ -16,6 +16,7 @@ go_library(
         "//self_host/packages/todofy/utils",
         "@com_github_badoux_checkmail//:checkmail",
         "@com_github_mailjet_mailjet_apiv3_go_v4//:mailjet-apiv3-go",
+        "@com_github_sirupsen_logrus//:logrus",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",
     ],
