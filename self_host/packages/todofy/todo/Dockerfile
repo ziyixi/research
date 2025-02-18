@@ -15,6 +15,7 @@ RUN apk --no-cache add ca-certificates tzdata
 # Copy the Bazel-built Go binary from the local system into the image
 COPY ./self_host/packages/todofy/todo/_todo_binary /todo
 COPY ./self_host/packages/todofy/todo/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 50052
