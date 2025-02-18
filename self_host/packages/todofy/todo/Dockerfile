@@ -14,14 +14,10 @@ RUN apk --no-cache add ca-certificates tzdata
 
 # Copy the Bazel-built Go binary from the local system into the image
 COPY ./self_host/packages/todofy/todo/_todo_binary /todo
+COPY ./self_host/packages/todofy/todo/entrypoint.sh /entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 50052
 
 # Run the app binary
-# CMD ["/todo", "-mailjet-api-key-public=${MAILJET_API_KEY_PUBLIC}", "-mailjet-api-key-private=${MAILJET_API_KEY_PRIVATE}", "-target-email=${TARGET_EMAIL}"]
-ENTRYPOINT /todo \
-    -port=${PORT} \
-    -mailjet-api-key-public=${MAILJET_API_KEY_PUBLIC} \
-    -mailjet-api-key-private=${MAILJET_API_KEY_PRIVATE} \
-    -target-email=${TARGET_EMAIL}
+ENTRYPOINT ["/entrypoint.sh"]

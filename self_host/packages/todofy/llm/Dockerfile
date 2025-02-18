@@ -12,12 +12,10 @@ RUN apk --no-cache add ca-certificates tzdata
 
 # Copy the Bazel-built Go binary from the local system into the image
 COPY ./self_host/packages/todofy/llm/_llm_binary /llm
+COPY ./self_host/packages/todofy/llm/entrypoint.sh /entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 50051
 
 # Run the app binary
-# CMD ["/llm", "-gemini-api-key=${GEMINI_API_KEY}"]
-ENTRYPOINT /llm \
-    -port=${PORT} \
-    -gemini-api-key=${GEMINI_API_KEY}
+ENTRYPOINT ["/entrypoint.sh"]

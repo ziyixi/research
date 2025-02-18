@@ -16,16 +16,10 @@ RUN apk --no-cache add ca-certificates tzdata
 
 # Copy the Bazel-built Go binary from the local system into the image
 COPY ./self_host/packages/todofy/_todofy_binary /todofy
+COPY ./self_host/packages/todofy/entrypoint.sh /entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 8080
 
 # Run the app binary
-# CMD ["/todofy","-allowed-users=${ALLOWED_USERS}", "-database-path=${DATABASE_PATH}", "-llm-addr=${LLMAddr}", "-todo-addr=${TodoAddr}", "-database-addr=${DatabaseAddr}"]
-ENTRYPOINT /todofy \
-    -port=${PORT} \
-    -allowed-users=${ALLOWED_USERS} \
-    -database-path=${DATABASE_PATH} \
-    -llm-addr=${LLMAddr} \
-    -todo-addr=${TodoAddr} \
-    -database-addr=${DatabaseAddr}
+ENTRYPOINT ["/entrypoint.sh"]

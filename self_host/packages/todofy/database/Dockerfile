@@ -15,11 +15,10 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the Bazel-built Go binary from the local system into the image
 COPY ./self_host/packages/todofy/database/_database_binary /database
+COPY ./self_host/packages/todofy/database/entrypoint.sh /entrypoint.sh
 
 # Expose the port your app will run on
 EXPOSE 50053
 
 # Run the app binary
-# CMD ["/database"]
-ENTRYPOINT /database \
-    -port=${PORT} 
+ENTRYPOINT ["/entrypoint.sh"]
