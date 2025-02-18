@@ -23,22 +23,22 @@ jobs:
           submodules: false
           fetch-depth: 1
 
-        # Install protoc
-      - name: Install Protoc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y protobuf-compiler
+      #   # Install protoc
+      # - name: Install Protoc
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y protobuf-compiler
 
-      # Install protoc-gen-go and protoc-gen-go-grpc
-      - name: Install Protoc Go plugins
-        run: |
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-          # Add the go bin path to PATH
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+      # # Install protoc-gen-go and protoc-gen-go-grpc
+      # - name: Install Protoc Go plugins
+      #   run: |
+      #     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+      #     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+      #     # Add the go bin path to PATH
+      #     echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       - name: Setup bazel
-        uses: bazel-contrib/setup-bazel@0.8.5
+        uses: bazel-contrib/setup-bazel@0.13.0
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
