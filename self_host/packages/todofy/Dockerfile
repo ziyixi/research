@@ -7,6 +7,9 @@ LABEL org.opencontainers.image.licenses="MIT"
 ENV PORT=8080
 ENV ALLOWED_USERS=""
 ENV DATABASE_PATH=""
+ENV LLMAddr=":50051"
+ENV TodoAddr=":50052"
+ENV DatabaseAddr=":50053"
 
 # Add CA certificates (already included in alpine but we ensure it's updated)
 RUN apk --no-cache add ca-certificates tzdata
@@ -18,4 +21,4 @@ COPY ./self_host/packages/todofy/_todofy_binary /todofy
 EXPOSE 8080
 
 # Run the app binary
-ENTRYPOINT ["/todofy","-allowed-users=${ALLOWED_USERS}", "-database-path=${DATABASE_PATH}"]
+ENTRYPOINT ["/todofy","-allowed-users=${ALLOWED_USERS}", "-database-path=${DATABASE_PATH}", "-llm-addr=${LLMAddr}", "-todo-addr=${TodoAddr}", "-database-addr=${DatabaseAddr}"]
