@@ -53,6 +53,9 @@ if [ ${#bazel_copy_from[@]} -ne ${#bazel_copy_to[@]} ] ||
     exit 1
 fi
 
+# Prepare essencial protobuf files
+bash self_host/packages/todofy/proto/copy_protos.sh
+
 echo "Step 1: Building Go binaries using Bazel..."
 for target in "${bazel_targets[@]}"; do
     echo "Building $target..."
