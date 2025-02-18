@@ -1,3 +1,4 @@
 common --enable_bzlmod
 build --stamp
 build --workspace_status_command="bash ./tools/workspace_status.sh && echo $STABLE_GIT_COMMIT"
+build --noincompatible_disallow_ctx_resolve_tools
