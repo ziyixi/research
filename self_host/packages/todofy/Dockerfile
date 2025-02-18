@@ -21,4 +21,11 @@ COPY ./self_host/packages/todofy/_todofy_binary /todofy
 EXPOSE 8080
 
 # Run the app binary
-CMD ["/todofy","-allowed-users=${ALLOWED_USERS}", "-database-path=${DATABASE_PATH}", "-llm-addr=${LLMAddr}", "-todo-addr=${TodoAddr}", "-database-addr=${DatabaseAddr}"]
+# CMD ["/todofy","-allowed-users=${ALLOWED_USERS}", "-database-path=${DATABASE_PATH}", "-llm-addr=${LLMAddr}", "-todo-addr=${TodoAddr}", "-database-addr=${DatabaseAddr}"]
+ENTRYPOINT /todofy \
+    -port=${PORT} \
+    -allowed-users=${ALLOWED_USERS} \
+    -database-path=${DATABASE_PATH} \
+    -llm-addr=${LLMAddr} \
+    -todo-addr=${TodoAddr} \
+    -database-addr=${DatabaseAddr}

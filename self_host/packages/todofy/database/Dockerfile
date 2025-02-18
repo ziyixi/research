@@ -20,4 +20,6 @@ COPY ./self_host/packages/todofy/database/_database_binary /database
 EXPOSE 50053
 
 # Run the app binary
-CMD ["/database"]
+# CMD ["/database"]
+ENTRYPOINT /database \
+    -port=${PORT} 

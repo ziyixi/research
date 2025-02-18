@@ -17,4 +17,7 @@ COPY ./self_host/packages/todofy/llm/_llm_binary /llm
 EXPOSE 50051
 
 # Run the app binary
-CMD ["/llm", "-gemini-api-key=${GEMINI_API_KEY}"]
+# CMD ["/llm", "-gemini-api-key=${GEMINI_API_KEY}"]
+ENTRYPOINT /llm \
+    -port=${PORT} \
+    -gemini-api-key=${GEMINI_API_KEY}
