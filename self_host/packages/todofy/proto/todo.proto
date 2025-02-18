@@ -31,6 +31,10 @@ message TodoRequest {
   string category = 6;
   // The todo task is collected from.
   string from = 7;
+  // Optional. Override email address this todo is sent to.
+  string to = 8;
+  // Optional. Override the email address name this todo is sent to.
+  string to_name = 9;
 }
 
 message TodoResponse {

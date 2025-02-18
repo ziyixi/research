@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"strings"
 
 	_ "embed"
 
@@ -29,6 +30,10 @@ func HandleUpdateTodo(c *gin.Context) {
 	emailContent := utils.ParseCloudmailin(jsonString)
 	if len(emailContent.From) == 0 || len(emailContent.To) == 0 || (len(emailContent.Subject) == 0 && len(emailContent.Content) == 0) {
 		c.JSON(http.StatusBadRequest, gin.H{"error in parsing json body": "from/to/subject/content is empty"})
+		return
+	}
+	if strings.HasPrefix(emailContent.Subject, utils.SystemAutomaticallyEmailPrefix) {
+		c.JSON(http.StatusOK, gin.H{"accept request": "this is a system automatically email, and will not be processed"})
 		return
 	}
 
@@ -89,7 +94,7 @@ func HandleUpdateTodo(c *gin.Context) {
 			Prompt:      summaryReq.Prompt,
 			MaxTokens:   summaryReq.MaxTokens,
 			Text:        summaryReq.Text,
-			Summary:     summaryResp.Summary,
+			Summary:     todoContent,
 		},
 	}
 	_, err = databaseClient.Write(c, databaseReq)

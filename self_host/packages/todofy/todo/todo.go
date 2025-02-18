@@ -70,6 +70,13 @@ func (s *todoServer) PopulateTodoByMailjet(ctx context.Context, req *pb.TodoRequ
 		return nil, err
 	}
 	mailjetClient := mailjet.NewMailjetClient(*mailjetAPIKeyPublic, *mailjetAPIKeyPrivate)
+
+	toEmail := *targetEmail
+	toEmailName := receiverName
+	if req.To != "" {
+		toEmail = req.To
+		toEmailName = req.ToName
+	}
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
 			From: &mailjet.RecipientV31{
@@ -78,8 +85,8 @@ func (s *todoServer) PopulateTodoByMailjet(ctx context.Context, req *pb.TodoRequ
 			},
 			To: &mailjet.RecipientsV31{
 				mailjet.RecipientV31{
-					Email: *targetEmail,
-					Name:  receiverName,
+					Email: toEmail,
+					Name:  toEmailName,
 				},
 			},
 			Subject:  fmt.Sprintf("%v [%v]", req.Subject, req.From),
