@@ -10,7 +10,7 @@ ENV PORT=50053
 RUN apk --no-cache add ca-certificates tzdata
 
 # Copy the Bazel-built Go binary from the local system into the image
-COPY ./self_host/packages/todofy/database/database_binary /database
+COPY ./self_host/packages/todofy/database/_database_binary /database
 
 # Expose the port your app will run on
 EXPOSE 50053

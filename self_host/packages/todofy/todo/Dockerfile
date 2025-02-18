@@ -13,7 +13,7 @@ ENV TARGET_EMAIL=""
 RUN apk --no-cache add ca-certificates tzdata
 
 # Copy the Bazel-built Go binary from the local system into the image
-COPY ./self_host/packages/todofy/todo/todo_binary /todo
+COPY ./self_host/packages/todofy/todo/_todo_binary /todo
 
 # Expose the port your app will run on
 EXPOSE 50052
