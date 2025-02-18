@@ -41,8 +41,7 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.13.0
         with:
           bazelisk-cache: true
-          # disk-cache: ${{ github.workflow }}
-          repository-cache: false
+          repository-cache: true
 
       - name: Build docker image
         run: |

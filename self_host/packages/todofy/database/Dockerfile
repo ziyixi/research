@@ -1,4 +1,4 @@
-FROM debian:slim
+FROM linuxcontainers/debian-slim:latest
 LABEL org.opencontainers.image.authors="docker@ziyixi.science"
 LABEL org.opencontainers.image.source="https://github.com/ziyixi/monorepo"
 LABEL org.opencontainers.image.description="Todofy (database) is a subpackage of Todofy for task database management."
