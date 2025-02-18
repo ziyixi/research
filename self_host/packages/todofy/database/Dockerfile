@@ -20,4 +20,4 @@ COPY ./self_host/packages/todofy/database/_database_binary /database
 EXPOSE 50053
 
 # Run the app binary
-ENTRYPOINT ["/database"]
+CMD ["/database"]

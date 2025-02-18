@@ -19,4 +19,4 @@ COPY ./self_host/packages/todofy/todo/_todo_binary /todo
 EXPOSE 50052
 
 # Run the app binary
-ENTRYPOINT ["/todo", "-mailjet-api-key-public=${MAILJET_API_KEY_PUBLIC}", "-mailjet-api-key-private=${MAILJET_API_KEY_PRIVATE}", "-target-email=${TARGET_EMAIL}"]
+CMD ["/todo", "-mailjet-api-key-public=${MAILJET_API_KEY_PUBLIC}", "-mailjet-api-key-private=${MAILJET_API_KEY_PRIVATE}", "-target-email=${TARGET_EMAIL}"]
