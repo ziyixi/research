@@ -1,0 +1,13 @@
+name: Daily Summary Cron
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # 1:00 AM UTC-8 (9:00 AM UTC)
+
+jobs:
+  send_summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Daily Summary
+        run: |
+          curl -X GET -u "${{ secrets.DAILY_USERNAME }}:${{ secrets.DAILY_PASSWORD }}" https://daily.ziyixi.science/api/summary
