@@ -39,6 +39,10 @@ message WriteRequest {
   DataBaseSchema schema = 2;
 }
 
+message WriteResponse {
+  // An empty message.
+}
+
 message QueryRecentRequest {
   // The type of database to use.
   DatabaseType type = 1;
@@ -49,10 +53,6 @@ message QueryRecentRequest {
 message QueryRecentResponse {
   // Recent entries in the database.
   repeated DataBaseSchema entries = 1;
-}
-
-message WriteResponse {
-  // An empty message.
 }
 
 message CreateIfNotExistRequest {

@@ -8,6 +8,7 @@ go_library(
     name = "utils",
     srcs = [
         "cloudmailin.go",
+        "consts.go",
         "grpc.go",
         "utils.go",
     ],

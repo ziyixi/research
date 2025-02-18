@@ -44,28 +44,25 @@ func (s *llmServer) Summarize(ctx context.Context, req *pb.LLMSummaryRequest) (*
 		maxTokens = req.MaxTokens
 	}
 
-	prompt := DefaultpromptToSummaryEmail
-	if req.Prompt != "" {
-		prompt = req.Prompt
-	}
+	prompt := req.Prompt
 
 	selectedModels := llmModelPriority
 	if req.Model != pb.Model_MODEL_UNSPECIFIED {
 		selectedModels = []pb.Model{req.Model}
 	}
 
-	summary, err := s.summaryInternal(ctx, req.ModelFamily, prompt, req.Text, selectedModels, maxTokens)
+	summary, model, err := s.summaryInternal(ctx, req.ModelFamily, prompt, req.Text, selectedModels, maxTokens)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate summary: %v", err)
 	}
 
-	return &pb.LLMSummaryResponse{Summary: summary}, nil
+	return &pb.LLMSummaryResponse{Summary: summary, Model: model}, nil
 }
 
-func (s *llmServer) summaryInternal(ctx context.Context, modelFamily pb.ModelFamily, prompt, text string, models []pb.Model, maxTokens int32) (string, error) {
+func (s *llmServer) summaryInternal(ctx context.Context, modelFamily pb.ModelFamily, prompt, text string, models []pb.Model, maxTokens int32) (string, pb.Model, error) {
 	for _, model := range models {
 		if _, ok := llmModelNames[model]; !ok {
-			return "", status.Errorf(codes.InvalidArgument, "unsupported model: %s", model)
+			return "", pb.Model_MODEL_UNSPECIFIED, status.Errorf(codes.InvalidArgument, "unsupported model: %s", model)
 		}
 
 		summary, err := s.tryGenerateSummary(ctx, modelFamily, prompt, text, model, maxTokens)
@@ -76,11 +73,11 @@ func (s *llmServer) summaryInternal(ctx context.Context, modelFamily pb.ModelFam
 		}
 		if summary != "" {
 			log.Infof("Successfully generated summary with model %s", model)
-			return summary, nil
+			return summary, model, nil
 		}
 	}
 	log.Errorf("Failed to generate summary with all models")
-	return "", status.Errorf(codes.Internal, "failed to generate summary with all models: %v", models)
+	return "", pb.Model_MODEL_UNSPECIFIED, status.Errorf(codes.Internal, "failed to generate summary with all models: %v", models)
 }
 
 func (s *llmServer) tryGenerateSummary(ctx context.Context, modelFamily pb.ModelFamily, prompt, text string, model pb.Model, maxTokens int32) (string, error) {

@@ -6,9 +6,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/ziyixi/monorepo/self_host/packages/todofy/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health/grpc_health_v1"
+
+	pb "github.com/ziyixi/monorepo/self_host/packages/todofy/proto"
 )
 
 // ServiceConfig holds the configuration for a single gRPC service
@@ -27,6 +31,13 @@ type GRPCClients struct {
 type serviceState struct {
 	conn   *grpc.ClientConn
 	client interface{}
+}
+
+func grpcMiddleware(clients *GRPCClients) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set(utils.KeyGRPCClients, clients)
+		c.Next()
+	}
 }
 
 // NewGRPCClients creates a new GRPCClients instance with the specified services
@@ -133,5 +144,18 @@ func (c *GRPCClients) WaitForHealthy(ctx context.Context, timeout time.Duration)
 		return fmt.Errorf("health check failed: %v", errors)
 	}
 
+	return nil
+}
+
+func (c *GRPCClients) SetUpDataBase(path string) error {
+	databaseClient := c.GetClient("database").(pb.DataBaseServiceClient)
+	req := &pb.CreateIfNotExistRequest{
+		Type: pb.DatabaseType_DATABASE_TYPE_SQLITE,
+		Path: path,
+	}
+	_, err := databaseClient.CreateIfNotExist(context.Background(), req)
+	if err != nil {
+		return fmt.Errorf("failed to set up database: %w", err)
+	}
 	return nil
 }

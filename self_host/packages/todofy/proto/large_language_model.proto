@@ -38,6 +38,8 @@ message LLMSummaryRequest {
 message LLMSummaryResponse {
   // The summary of the text.
   string summary = 1;
+  // The model used for the request.
+  Model model = 2;
 }
 
 service LLMSummaryService {

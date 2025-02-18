@@ -25,6 +25,7 @@ func init() {
 // Config holds all configuration parameters
 type Config struct {
 	AllowedUsers       string
+	DataBasePath       string
 	Port               int
 	HealthCheckTimeout int
 	LLMAddr            string
@@ -39,6 +40,7 @@ var (
 
 func init() {
 	flag.StringVar(&config.AllowedUsers, "allowed-users", "", "Comma-separated list of allowed users in the format 'username:password'")
+	flag.StringVar(&config.DataBasePath, "database-path", "", "Path to the SQLite database file")
 	flag.IntVar(&config.Port, "port", 8080, "Port to run the server on")
 	flag.IntVar(&config.HealthCheckTimeout, "health-check-timeout", 10, "Timeout for health check in seconds")
 
@@ -81,16 +83,18 @@ func setupGRPCClients() (*GRPCClients, error) {
 	return clients, nil
 }
 
-func setupRouter(allowedUsers gin.Accounts) *gin.Engine {
+func setupRouter(allowedUsers gin.Accounts, grpcClients *GRPCClients) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.Default()
-	app.Use(utils.RateLimitMiddleware())
 
 	api := app.Group("/api", gin.BasicAuth(allowedUsers))
-	v1 := api.Group("/v1")
+	api.Use(grpcMiddleware(grpcClients))
+	api.GET("/summary", HandleSummary)
 
-	v1.POST("/update_todo", handleUpdateTodo)
-	v1.GET("/summary", handleSummary)
+	v1 := api.Group("/v1")
+	v1.Use(utils.RateLimitMiddleware())
+
+	v1.POST("/update_todo", HandleUpdateTodo)
 
 	return app
 }
@@ -121,7 +125,13 @@ func main() {
 	for name := range grpcClients.services {
 		servicesNames = append(servicesNames, name)
 	}
+
 	log.Infof("Connected to gRPC services: %v", servicesNames)
+	if config.DataBasePath == "" {
+		log.Fatal("No database path provided. Use --database-path flag to specify it.")
+	}
+	grpcClients.SetUpDataBase(config.DataBasePath)
+	log.Infof("Database successfully set up at %s", config.DataBasePath)
 
 	// Parse and validate allowed users
 	allowedUserMap, allowedUsersStrings := utils.ParseAllowedUsers(config.AllowedUsers)
@@ -131,7 +141,7 @@ func main() {
 	log.Infof("Allowed users (hidden passwords): %s", allowedUsersStrings)
 
 	// Setup and start the server
-	app := setupRouter(allowedUserMap)
+	app := setupRouter(allowedUserMap, grpcClients)
 	listenAddr := fmt.Sprintf(":%d", config.Port)
 	log.Infof("Git commit: %s", GitCommit)
 	log.Infof("Gin has started in %s mode on %s", gin.Mode(), listenAddr)

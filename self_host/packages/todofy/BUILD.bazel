@@ -8,9 +8,11 @@ go_library(
     name = "todofy_lib",
     srcs = [
         "grpc.go",
+        "handle_summary.go",
+        "handle_updatetodo.go",
         "main.go",
-        "route.go",
     ],
+    embedsrcs = ["templates/todoDescription.tmpl"],
     importpath = "github.com/ziyixi/monorepo/self_host/packages/todofy",
     visibility = ["//visibility:private"],
     deps = [
